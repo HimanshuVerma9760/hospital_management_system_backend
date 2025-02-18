@@ -1,8 +1,4 @@
-import {
-  HttpException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import City from './Models/city.model';
 import { State } from './Models/state.model';
@@ -23,32 +19,26 @@ export class AppService {
     try {
       const result = await this.cityModel.findAll();
       return {
-        response: 'Success!',
-        message: 'Successfully fetched Cities!',
-        code: '202',
+        response: 'Success',
+        message: 'Successfully fetched Cities',
+        statusCode: '200',
         result,
       };
     } catch (error) {
-      throw new HttpException(
-        'Some Error Occurred while fetching Cities!',
-        500,
-      );
+      throw new HttpException('Some Error Occurred while fetching Cities', 500);
     }
   }
   async getAllStates() {
     try {
       const result = await this.stateModel.findAll();
       return {
-        reponse: 'Success!',
-        message: 'Successfully fetched States!',
-        code: '202',
+        reponse: 'Success',
+        message: 'Successfully fetched States',
+        statusCode: '200',
         result,
       };
     } catch (error) {
-      throw new HttpException(
-        'Some Error Occurred while fetching Cities!',
-        500,
-      );
+      throw new HttpException('Some Error Occurred while fetching Cities', 500);
     }
   }
 
@@ -75,20 +65,20 @@ export class AppService {
             process.env.USER_KEY,
           );
           return {
-            response: 'Success!',
-            message: 'Login is Successfull!',
-            code: '202',
+            response: 'Success',
+            message: 'Login is Successfull',
+            statusCode: '200',
             result: foundUser,
             token,
           };
         }
-        throw new UnauthorizedException('Not Authorised!');
+        throw new HttpException('Not Authorised', 401);
       } else {
-        throw new UnauthorizedException('Not Authorised!');
+        throw new HttpException('Not Authorised', 401);
       }
     } catch (error) {
       console.log(error);
-      throw new UnauthorizedException('Not Authorised!');
+      throw new HttpException('Not Authorised', 401);
     }
   }
 }

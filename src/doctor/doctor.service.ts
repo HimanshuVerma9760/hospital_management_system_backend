@@ -10,9 +10,9 @@ export class DoctorService {
   async createDoctor(dto: CreateDoctorDto) {
     const result = await this.doctorModel.create(dto as any);
     return {
-      response: 'Success!',
-      message: 'Successfully Added Doctor!',
-      code: '202',
+      response: 'Success',
+      message: 'Successfully Added Doctor',
+      statusCode: '201',
       result,
     };
   }
@@ -20,9 +20,9 @@ export class DoctorService {
   async getAllDoctors() {
     const result = await this.doctorModel.findAll({ include: { all: true } });
     return {
-      response: 'Success!',
-      message: 'Successfully fetched all doctors!',
-      code: '202',
+      response: 'Success',
+      message: 'Successfully fetched all doctors',
+      statusCode: '200',
       result,
     };
   }
@@ -31,11 +31,11 @@ export class DoctorService {
     const doctor = await this.doctorModel.findByPk(id, {
       include: { all: true },
     });
-    if (!doctor) throw new NotFoundException('Doctor not found');
+    if (!doctor) throw new HttpException('Doctor not found', 404);
     return {
-      response: 'Success!',
-      message: 'Successfully fetched doctor by id!',
-      code: '202',
+      response: 'Success',
+      message: 'Successfully fetched doctor by id',
+      statusCode: '200',
       doctor,
     };
   }
@@ -46,17 +46,17 @@ export class DoctorService {
     try {
       updatedDoctor = await doctor.doctor.update(dto);
     } catch (error) {
-      throw new HttpException('Error Occure while updating doctor!', 404);
+      throw new HttpException('Error Occure while updating doctor', 404);
     }
     if (updatedDoctor) {
       return {
-        response: 'Success!',
-        message: 'Successfully updated doctor info!',
-        code: '202',
+        response: 'Success',
+        message: 'Successfully updated doctor info',
+        statusCode: '201',
         updatedDoctor,
       };
     } else {
-      throw new HttpException('Error Occure while updating doctor!', 404);
+      throw new HttpException('Error Occure while updating doctor', 404);
     }
   }
 
@@ -65,13 +65,13 @@ export class DoctorService {
       const doctor = await this.getDoctorById(id);
       await doctor.doctor.update({ deletedAt: new Date() });
       return {
-        response: 'Success!',
-        message: 'Successfully marked the doctor as deleted!',
-        code: '202',
+        response: 'Success',
+        message: 'Successfully marked the doctor as deleted',
+        statusCode: '201',
       };
     } catch (error) {
       throw new HttpException(
-        'Some Error Occurred while soft deleting the Doctor!',
+        'Some Error Occurred while soft deleting the Doctor',
         404,
       );
     }
@@ -82,13 +82,13 @@ export class DoctorService {
       const doctor = await this.getDoctorById(id);
       await doctor.doctor.destroy();
       return {
-        response: 'Success!',
-        message: 'Successfully deleted the doctor!',
-        code: '202',
+        response: 'Success',
+        message: 'Successfully deleted the doctor',
+        statusCode: '201',
       };
     } catch (error) {
       throw new HttpException(
-        'Some Error Occurred while soft deleting the Doctor!',
+        'Some Error Occurred while soft deleting the Doctor',
         404,
       );
     }
