@@ -38,6 +38,11 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      role_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 3,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

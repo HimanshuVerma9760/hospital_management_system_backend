@@ -15,6 +15,22 @@ export class AppService {
     @InjectModel(User) private readonly userModel: typeof User,
   ) {}
 
+  async verify(token: string) {
+    try {
+      let verifyToken: any;
+      verifyToken = jwt.verify(token, process.env.USER_KEY);
+      if (verifyToken) {
+        return {
+          response: true,
+          statusCode: '200',
+          message: 'Successfully Verified User',
+          role: verifyToken.role,
+        };
+      }
+    } catch (error) {
+      throw new HttpException('Failed to verify user', 401);
+    }
+  }
   async getAllCities() {
     try {
       const result = await this.cityModel.findAll();
@@ -22,7 +38,7 @@ export class AppService {
         response: 'Success',
         message: 'Successfully fetched Cities',
         statusCode: '200',
-        result,
+        result,                  
       };
     } catch (error) {
       throw new HttpException('Some Error Occurred while fetching Cities', 500);

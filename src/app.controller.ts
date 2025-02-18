@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import userDTO from './dto/user.dto';
 
@@ -9,6 +9,10 @@ export class AppController {
   @Get('/cities')
   getCity() {
     return this.appService.getAllCities();
+  }
+  @Get('/verify/:token')
+  verify(@Param("token") token:string) {
+    return this.appService.verify(token);
   }
   @Get('/states')
   getState() {
