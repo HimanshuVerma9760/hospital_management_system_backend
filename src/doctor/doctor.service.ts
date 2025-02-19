@@ -17,13 +17,30 @@ export class DoctorService {
     };
   }
 
-  async getAllDoctors() {
-    const result = await this.doctorModel.findAll({ include: { all: true } });
+  async getAllDoctors(page: number, limit: number) {
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 5;
+  
+    const offset = (page - 1) * limit;
+    // console.log(`Fetching doctors with offset: ${offset}, limit: ${limit}`);
+  
+    const { count, rows } = await this.doctorModel.findAndCountAll({
+      offset,
+      limit,
+      distinct:true,
+      include: { all: true },
+    });
+  
+    console.log(`Total Doctors Found: ${count}, Returned: ${rows.length}`);
+  
     return {
       response: 'Success',
       message: 'Successfully fetched all doctors',
-      statusCode: '200',
-      result,
+      statusCode: 200,
+      totalRecords: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      result: rows,
     };
   }
 

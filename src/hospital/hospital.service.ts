@@ -12,15 +12,23 @@ export class HospitalService {
     return { response: 'Success', statusCode: '201', result };
   }
 
-  async getAllHospitals() {
-    const hospitals = await this.hospitalModel.findAll({
+  async getAllHospitals(page: number, limit: number) {
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 5;
+    const skip = (page - 1) * limit;
+    const { count, rows } = await this.hospitalModel.findAndCountAll({
+      offset: skip,
+      limit: limit,
+      distinct:true,
       include: { all: true },
     });
+    console.log("count: ", count)
     return {
       response: 'Success',
       message: 'Successfully fetched all hospitals',
       statusCode: '200',
-      hospitals,
+      totalRecords: count,
+      result: rows,
     };
   }
 

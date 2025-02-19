@@ -6,12 +6,14 @@ import {
   Param,
   Put,
   Delete,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { HospitalService } from './hospital.service';
 import Hospital from 'src/Models/hospital.model';
 import { CreateHospitalDto, UpdateHospitalDto } from './dto/hospital.dto';
 
-@Controller('hospitals')
+@Controller('api/hospitals')
 export class HospitalController {
   constructor(private readonly hospitalService: HospitalService) {}
 
@@ -21,8 +23,11 @@ export class HospitalController {
   }
 
   @Get()
-  async getAllHospitals() {
-    return this.hospitalService.getAllHospitals();
+  async getAllHospitals(
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ) {
+    return this.hospitalService.getAllHospitals(page, limit);
   }
 
   @Get(':id')

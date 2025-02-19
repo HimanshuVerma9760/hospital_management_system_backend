@@ -6,6 +6,8 @@ import {
   Param,
   Put,
   Delete,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
 import { CreateDoctorDto, UpdateDoctorDto } from './dto/doctor.dto';
@@ -20,8 +22,11 @@ export class DoctorController {
   }
 
   @Get()
-  async getAllDoctors() {
-    return this.doctorService.getAllDoctors();
+  async getAllDoctors(
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ) {
+    return this.doctorService.getAllDoctors(page, limit);
   }
 
   @Get(':id')
@@ -33,7 +38,7 @@ export class DoctorController {
   async updateDoctor(@Param('id') id: number, @Body() dto: UpdateDoctorDto) {
     return this.doctorService.updateDoctor(id, dto);
   }
-  
+
   @Delete(':id/soft')
   async softDeleteDoctor(@Param('id') id: number) {
     return this.doctorService.softDeleteDoctor(id);
