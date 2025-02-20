@@ -22,6 +22,8 @@ import SuperAdminController from './super-admin/superAdmin.controller';
 import SuperAdminService from './super-admin/superAdmin.service';
 import AdminController from './admin/admin.controller';
 import AdminService from './admin/admin.service';
+import PatientController from './patients/patient.controller';
+import PatientService from './patients/patient.service';
 
 @Module({
   imports: [
@@ -69,6 +71,7 @@ import AdminService from './admin/admin.service';
     HospitalController,
     SuperAdminController,
     AdminController,
+    PatientController,
   ],
   providers: [
     AppService,
@@ -76,6 +79,7 @@ import AdminService from './admin/admin.service';
     HospitalService,
     SuperAdminService,
     AdminService,
+    PatientService,
   ],
 })
 export class AppModule {}

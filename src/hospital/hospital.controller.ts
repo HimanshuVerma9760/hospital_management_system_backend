@@ -29,6 +29,10 @@ export class HospitalController {
   ) {
     return this.hospitalService.getAllHospitals(page, limit);
   }
+  @Get('get-all')
+  async getHospitals() {
+    return this.hospitalService.getHospitals();
+  }
 
   @Get(':id')
   async getHospitalById(@Param('id') id: number) {

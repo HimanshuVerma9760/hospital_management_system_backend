@@ -28,6 +28,10 @@ export class DoctorController {
   ) {
     return this.doctorService.getAllDoctors(page, limit);
   }
+  @Get("/get-all")
+  async getDoctors() {
+    return this.doctorService.getDoctors();
+  }
 
   @Get(':id')
   async getDoctorById(@Param('id') id: number) {

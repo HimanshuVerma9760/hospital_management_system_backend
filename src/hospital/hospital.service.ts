@@ -19,16 +19,27 @@ export class HospitalService {
     const { count, rows } = await this.hospitalModel.findAndCountAll({
       offset: skip,
       limit: limit,
-      distinct:true,
+      distinct: true,
       include: { all: true },
     });
-    console.log("count: ", count)
+    console.log('count: ', count);
     return {
       response: 'Success',
       message: 'Successfully fetched all hospitals',
       statusCode: '200',
       totalRecords: count,
       result: rows,
+    };
+  }
+
+  async getHospitals() {
+    const result = await this.hospitalModel.findAll({ include: { all: true } });
+    console.log(result);
+    return {
+      response: 'Success',
+      statusCode: '200',
+      message: 'Succesfully fetched all hospitals',
+      result,
     };
   }
 
