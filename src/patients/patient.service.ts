@@ -9,26 +9,48 @@ export default class PatientService {
     @InjectModel(Patient) private readonly patientModel: typeof Patient,
   ) {}
 
-  async getPatients(page: number, limit: number) {
+  async getPatients(page: number, limit: number, disease: string) {
     const skip = (page - 1) * limit;
-    const { count, rows } = await this.patientModel.findAndCountAll({
-      offset: skip,
-      limit,
-      distinct: true,
-      include: { all: true },
-    });
+    let totalCount: number, result: any;
+    if (disease === 'all') {
+      const { count, rows } = await this.patientModel.findAndCountAll({
+        offset: skip,
+        limit,
+        distinct: true,
+        include: { all: true },
+      });
+      totalCount = count;
+      result = rows;
+    } else {
+      const { count, rows } = await this.patientModel.findAndCountAll({
+        offset: skip,
+        limit,
+        distinct: true,
+        where: {
+          disease: disease,
+        },
+        include: { all: true },
+      });
+      totalCount = count;
+      result = rows;
+    }
 
     return {
       response: 'Success',
       statusCode: '200',
       message: 'Successfully fetched all patients',
-      totalRecords: count,
-      result: rows,
+      totalRecords: totalCount,
+      result: result,
     };
   }
 
   async addPatient(dto: AddPatientDto) {
-     const result = await this.patientModel.create(dto as any);
-     return { response: 'Success', statusCode: '201', result };
-   }
+    const result = await this.patientModel.create(dto as any);
+    return {
+      response: 'Success',
+      message: 'Successfully added patient',
+      statusCode: '201',
+      result,
+    };
+  }
 }

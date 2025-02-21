@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import exp from 'constants';
 import Specialization from './Models/specialization.model';
+import Disease from './Models/disease.model';
 
 @Injectable()
 export class AppService {
@@ -15,7 +16,9 @@ export class AppService {
     @InjectModel(City) private readonly cityModel: typeof City,
     @InjectModel(State) private readonly stateModel: typeof State,
     @InjectModel(User) private readonly userModel: typeof User,
-    @InjectModel(Specialization) private readonly specializationModel: typeof Specialization,
+    @InjectModel(Specialization)
+    private readonly specializationModel: typeof Specialization,
+    @InjectModel(Disease) private readonly diseasesModel: typeof Disease,
   ) {}
 
   async verify(token: string) {
@@ -115,6 +118,22 @@ export class AppService {
     } catch (error) {
       console.log(error);
       throw new HttpException('Not Authorised', 401);
+    }
+  }
+  async getDiseases() {
+    try {
+      const result = await this.diseasesModel.findAll();
+      return {
+        response: 'Success',
+        message: 'Successfully fetched Diseases',
+        statusCode: '200',
+        result,
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Some Error Occurred while fetching Diseases',
+        500,
+      );
     }
   }
 }

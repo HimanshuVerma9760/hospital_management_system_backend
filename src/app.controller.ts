@@ -26,4 +26,8 @@ export class AppController {
   getSpecializations() {
     return this.appService.getSpecializations();
   }
+  @Get('/diseases')
+  getDiseases() {
+    return this.appService.getDiseases();
+  }
 }
