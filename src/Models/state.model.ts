@@ -26,3 +26,21 @@ export class State extends Model<State> {
   @Column({ type: DataType.DATE, allowNull: false, defaultValue: Date.now() })
   updatedAt?: any;
 }
+// @Table({ tableName: 'Specializations', timestamps: true })
+// export class Specialization extends Model<Specialization> {
+//   @Column({
+//     type: DataType.INTEGER,
+//     allowNull: false,
+//     autoIncrement: true,
+//     primaryKey: true,
+//   })
+//   id: number;
+//   @Column({ type: DataType.STRING, allowNull: false })
+//   name: string;
+//   @Column({ type: DataType.DATE, allowNull: false, defaultValue: Date.now() })
+//   createdAt?: any;
+//   @Column({ type: DataType.DATE, allowNull: false, defaultValue: Date.now() })
+//   updatedAt?: any;
+//   @Column({ type: DataType.DATE, allowNull: true, defaultValue: null })
+//   deletedAt?: Date;
+// }

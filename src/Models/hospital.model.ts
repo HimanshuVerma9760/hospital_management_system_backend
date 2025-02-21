@@ -9,6 +9,7 @@ import {
 } from 'sequelize-typescript';
 import City from './city.model';
 import Doctor from './doctor.model';
+import Specialization from './specialization.model';
 
 @Table({ tableName: 'Hospitals', timestamps: true })
 export default class Hospital extends Model<Hospital> {

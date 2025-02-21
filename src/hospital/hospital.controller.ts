@@ -17,17 +17,18 @@ import { CreateHospitalDto, UpdateHospitalDto } from './dto/hospital.dto';
 export class HospitalController {
   constructor(private readonly hospitalService: HospitalService) {}
 
-  @Post()
-  async createHospital(@Body() dto: CreateHospitalDto) {
-    return this.hospitalService.createHospital(dto);
+  @Post('/add/:token')
+  async createHospital(@Body() dto: CreateHospitalDto, @Param('token') token: string) {
+    return this.hospitalService.createHospital(dto, token);
   }
 
-  @Get()
+  @Get('get/:token')
   async getAllHospitals(
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
+    @Param('token') token: string,
   ) {
-    return this.hospitalService.getAllHospitals(page, limit);
+    return this.hospitalService.getAllHospitals(page, limit, token);
   }
   @Get('get-all')
   async getHospitals() {

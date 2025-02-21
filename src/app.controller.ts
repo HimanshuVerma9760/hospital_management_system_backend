@@ -22,4 +22,8 @@ export class AppController {
   login(@Body() userData: userDTO) {
     return this.appService.login(userData);
   }
+  @Get('/specializations')
+  getSpecializations() {
+    return this.appService.getSpecializations();
+  }
 }

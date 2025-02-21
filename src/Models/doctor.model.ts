@@ -26,7 +26,7 @@ export default class Doctor extends Model<Doctor> {
 
   @Column({ type: DataType.STRING, allowNull: false })
   specialization: string;
-
+  
   @ForeignKey(() => Hospital)
   @Column({ type: DataType.INTEGER, allowNull: false })
   hospital_id: number;
@@ -48,7 +48,9 @@ export default class Doctor extends Model<Doctor> {
 
   @Column({ type: DataType.DATE, allowNull: false, defaultValue: Date.now() })
   createdAt?: any;
-
+  
   @Column({ type: DataType.DATE, allowNull: false, defaultValue: Date.now() })
   updatedAt?: any;
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue:true })
+  status: boolean;
 }

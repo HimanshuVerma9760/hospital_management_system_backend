@@ -9,7 +9,7 @@ import {
 export class CreateDoctorDto {
   @IsNotEmpty({ message: 'Name cannot be Empty!' })
   @IsString({ message: 'Name must be a String!' })
-  @Matches(/^[A-Za-z\s]+$/, {
+  @Matches(/^[A-Za-z\s.]+$/, {
     message: 'Name must not contain numbers or special characters!',
   })
   name: string;
@@ -32,7 +32,7 @@ export class CreateDoctorDto {
 
 export class UpdateDoctorDto {
   @IsOptional()
-  @Matches(/^[A-Za-z\s]+$/, {
+  @Matches(/^[A-Za-z\s.]+$/, {
     message: 'Name must not contain numbers or special characters!',
   })
   name?: string;

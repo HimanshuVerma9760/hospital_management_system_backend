@@ -24,6 +24,7 @@ import AdminController from './admin/admin.controller';
 import AdminService from './admin/admin.service';
 import PatientController from './patients/patient.controller';
 import PatientService from './patients/patient.service';
+import Specialization from './Models/specialization.model';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import PatientService from './patients/patient.service';
         Doctor,
         Patient,
         RoleHasPermission,
+        Specialization,
         RoleHasModule,
       ],
       autoLoadModels: true,
@@ -63,6 +65,7 @@ import PatientService from './patients/patient.service';
       Patient,
       RoleHasPermission,
       RoleHasModule,
+      Specialization
     ]),
   ],
   controllers: [

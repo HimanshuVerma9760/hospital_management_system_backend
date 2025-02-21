@@ -6,6 +6,8 @@ import userDTO from './dto/user.dto';
 import { User } from './Models/user.model';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import exp from 'constants';
+import Specialization from './Models/specialization.model';
 
 @Injectable()
 export class AppService {
@@ -13,6 +15,7 @@ export class AppService {
     @InjectModel(City) private readonly cityModel: typeof City,
     @InjectModel(State) private readonly stateModel: typeof State,
     @InjectModel(User) private readonly userModel: typeof User,
+    @InjectModel(Specialization) private readonly specializationModel: typeof Specialization,
   ) {}
 
   async verify(token: string) {
@@ -38,7 +41,7 @@ export class AppService {
         response: 'Success',
         message: 'Successfully fetched Cities',
         statusCode: '200',
-        result,                  
+        result,
       };
     } catch (error) {
       throw new HttpException('Some Error Occurred while fetching Cities', 500);
@@ -58,6 +61,22 @@ export class AppService {
     }
   }
 
+  async getSpecializations() {
+    try {
+      const result = await this.specializationModel.findAll();
+      return {
+        response: 'Success',
+        message: 'Successfully fetched Specializations',
+        statusCode: '200',
+        result,
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Some Error Occurred while fetching Specializations',
+        500,
+      );
+    }
+  }
   async login(userData: userDTO) {
     try {
       const foundUser: any = await this.userModel.findOne({
@@ -79,6 +98,7 @@ export class AppService {
               role: foundUser.role.name,
             },
             process.env.USER_KEY,
+            { expiresIn: '1h' },
           );
           return {
             response: 'Success',

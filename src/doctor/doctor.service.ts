@@ -2,12 +2,26 @@ import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateDoctorDto, UpdateDoctorDto } from './dto/doctor.dto';
 import Doctor from 'src/Models/doctor.model';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class DoctorService {
   constructor(@InjectModel(Doctor) private doctorModel: typeof Doctor) {}
 
-  async createDoctor(dto: CreateDoctorDto) {
+  verifyToken(token: string) {
+    try {
+      const verifiedToken = jwt.verify(token, process.env.USER_KEY);
+      return verifiedToken.role;
+    } catch (error) {
+      throw new HttpException('Not Authorized', 401);
+    }
+  }
+
+  async createDoctor(dto: CreateDoctorDto, token: string) {
+    const role = this.verifyToken(token);
+    if (!(role === 'Super-Admin' || role === 'Admin')) {
+      throw new HttpException('Not Authorized', 401);
+    }
     const result = await this.doctorModel.create(dto as any);
     return {
       response: 'Success',
@@ -18,7 +32,12 @@ export class DoctorService {
   }
 
   async getDoctors() {
-    const result = await this.doctorModel.findAll({ include: { all: true } });
+    const result = await this.doctorModel.findAll({
+      where: {
+        status: true,
+      },
+      include: { all: true },
+    });
     return {
       response: 'Success',
       statusCode: '202',
@@ -26,30 +45,51 @@ export class DoctorService {
       result,
     };
   }
-  async getAllDoctors(page: number, limit: number) {
+  async getAllDoctors(
+    page: number,
+    limit: number,
+    specialization: string,
+    token: string,
+  ) {
+    const role = this.verifyToken(token);
+    if (!(role === 'Super-Admin' || role === 'Admin')) {
+      throw new HttpException('Not Authorized', 401);
+    }
     if (page < 1) page = 1;
     if (limit < 1) limit = 5;
 
     const offset = (page - 1) * limit;
-    // console.log(`Fetching doctors with offset: ${offset}, limit: ${limit}`);
-
-    const { count, rows } = await this.doctorModel.findAndCountAll({
-      offset,
-      limit,
-      distinct: true,
-      include: { all: true },
-    });
-
-    console.log(`Total Doctors Found: ${count}, Returned: ${rows.length}`);
-
+    let totalCount: number, result: any;
+    if (specialization !== 'all') {
+      const { count, rows } = await this.doctorModel.findAndCountAll({
+        offset,
+        limit,
+        distinct: true,
+        where: {
+          specialization: specialization,
+        },
+        include: { all: true },
+      });
+      totalCount = count;
+      result = rows;
+    } else {
+      const { count, rows } = await this.doctorModel.findAndCountAll({
+        offset,
+        limit,
+        distinct: true,
+        include: { all: true },
+      });
+      totalCount = count;
+      result = rows;
+    }
     return {
       response: 'Success',
       message: 'Successfully fetched all doctors',
       statusCode: 200,
-      totalRecords: count,
-      totalPages: Math.ceil(count / limit),
+      totalRecords: totalCount,
+      totalPages: Math.ceil(totalCount / limit),
       currentPage: page,
-      result: rows,
+      result: result,
     };
   }
 
@@ -66,7 +106,11 @@ export class DoctorService {
     };
   }
 
-  async updateDoctor(id: number, dto: UpdateDoctorDto) {
+  async updateDoctor(id: number, dto: UpdateDoctorDto, token: string) {
+    const role = this.verifyToken(token);
+    if (!(role === 'Super-Admin' || role === 'Admin')) {
+      throw new HttpException('Not Authorized', 401);
+    }
     const doctor = await this.getDoctorById(id);
     let updatedDoctor: any;
     try {
@@ -86,10 +130,14 @@ export class DoctorService {
     }
   }
 
-  async softDeleteDoctor(id: number) {
+  async softDeleteDoctor(id: number, token: string) {
+    const role = this.verifyToken(token);
+    if (!(role === 'Super-Admin' || role === 'Admin')) {
+      throw new HttpException('Not Authorized', 401);
+    }
     try {
       const doctor = await this.getDoctorById(id);
-      await doctor.doctor.update({ deletedAt: new Date() });
+      await doctor.doctor.update({ deletedAt: new Date(), status: false });
       return {
         response: 'Success',
         message: 'Successfully marked the doctor as deleted',
@@ -102,8 +150,32 @@ export class DoctorService {
       );
     }
   }
+  async restoreDoctor(id: number, token: string) {
+    const role = this.verifyToken(token);
+    if (!(role === 'Super-Admin' || role === 'Admin')) {
+      throw new HttpException('Not Authorized', 401);
+    }
+    try {
+      const doctor = await this.getDoctorById(id);
+      await doctor.doctor.update({ status: true });
+      return {
+        response: 'Success',
+        message: 'Successfully restored the doctor',
+        statusCode: '201',
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Some Error Occurred while restoring Doctor',
+        404,
+      );
+    }
+  }
 
-  async deleteDoctor(id: number) {
+  async deleteDoctor(id: number, token: string) {
+    const role = this.verifyToken(token);
+    if (!(role === 'Super-Admin' || role === 'Admin')) {
+      throw new HttpException('Not Authorized', 401);
+    }
     try {
       const doctor = await this.getDoctorById(id);
       await doctor.doctor.destroy();
