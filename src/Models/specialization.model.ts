@@ -18,4 +18,6 @@ export default class Specialization extends Model<Specialization> {
   updatedAt?: any;
   @Column({ type: DataType.DATE, allowNull: true, defaultValue: null })
   deletedAt?: Date;
+  @HasMany(() => Doctor)
+  doctor: Doctor;
 }

@@ -17,10 +17,16 @@ export class DoctorService {
     }
   }
 
-  async createDoctor(dto: CreateDoctorDto, token: string) {
+  async createDoctor(dto: CreateDoctorDto, authHeader: string) {
+    console.log(authHeader);
+    const token = authHeader.split(' ')[1];
     const role = this.verifyToken(token);
     if (!(role === 'Super-Admin' || role === 'Admin')) {
       throw new HttpException('Not Authorized', 401);
+    }
+    const doctorName = dto.name.split(' ');
+    if (doctorName[0] !== 'Dr.') {
+      dto.name = 'Dr. ' + dto.name;
     }
     const result = await this.doctorModel.create(dto as any);
     return {
@@ -48,7 +54,7 @@ export class DoctorService {
   async getAllDoctors(
     page: number,
     limit: number,
-    specialization: string,
+    specialization: number,
     token: string,
   ) {
     const role = this.verifyToken(token);
@@ -60,13 +66,13 @@ export class DoctorService {
 
     const offset = (page - 1) * limit;
     let totalCount: number, result: any;
-    if (specialization !== 'all') {
+    if (specialization !== 0) {
       const { count, rows } = await this.doctorModel.findAndCountAll({
         offset,
         limit,
         distinct: true,
         where: {
-          specialization: specialization,
+          specialization_id: specialization,
         },
         include: { all: true },
       });

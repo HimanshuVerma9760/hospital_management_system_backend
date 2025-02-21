@@ -15,11 +15,8 @@ export class CreateDoctorDto {
   name: string;
 
   @IsNotEmpty({ message: 'specialization cannot be Empty!' })
-  @IsString({ message: 'specialization must be a String!' })
-  @Matches(/^[A-Za-z\s]+$/, {
-    message: 'specialization must not contain numbers or special characters!',
-  })
-  specialization: string;
+  @IsNumber({}, { message: 'Specialization Id must be number' })
+  specialization_id: number;
 
   @IsNotEmpty({ message: 'Hospital Id cannot be Empty!' })
   @IsNumber({}, { message: 'Hospital Id must be number' })
@@ -39,11 +36,8 @@ export class UpdateDoctorDto {
 
   @IsOptional()
   @IsNotEmpty({ message: 'specialization cannot be Empty!' })
-  @IsString({ message: 'specialization must be a String!' })
-  @Matches(/^[A-Za-z\s]+$/, {
-    message: 'specialization must not contain numbers or special characters!',
-  })
-  specialization?: string;
+  @IsNumber({}, { message: 'Specialization Id must be number' })
+  specialization_id?: number;
 
   @IsOptional()
   @IsNotEmpty({ message: 'Hospital Id cannot be Empty!' })

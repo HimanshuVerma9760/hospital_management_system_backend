@@ -10,6 +10,7 @@ import {
 import Hospital from './hospital.model';
 import City from './city.model';
 import Patient from './patient.model';
+import Specialization from './specialization.model';
 
 @Table({ tableName: 'Doctors', timestamps: true })
 export default class Doctor extends Model<Doctor> {
@@ -24,9 +25,12 @@ export default class Doctor extends Model<Doctor> {
   @Column({ type: DataType.STRING, allowNull: false })
   name: string;
 
+  @ForeignKey(() => Specialization)
   @Column({ type: DataType.STRING, allowNull: false })
-  specialization: string;
-  
+  specialization_id: number;
+  @BelongsTo(() => Specialization)
+  specialization: Specialization;
+
   @ForeignKey(() => Hospital)
   @Column({ type: DataType.INTEGER, allowNull: false })
   hospital_id: number;
@@ -48,9 +52,9 @@ export default class Doctor extends Model<Doctor> {
 
   @Column({ type: DataType.DATE, allowNull: false, defaultValue: Date.now() })
   createdAt?: any;
-  
+
   @Column({ type: DataType.DATE, allowNull: false, defaultValue: Date.now() })
   updatedAt?: any;
-  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue:true })
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
   status: boolean;
 }

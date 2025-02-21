@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   ParseIntPipe,
+  Headers,
 } from '@nestjs/common';
 import { HospitalService } from './hospital.service';
 import Hospital from 'src/Models/hospital.model';
@@ -17,17 +18,22 @@ import { CreateHospitalDto, UpdateHospitalDto } from './dto/hospital.dto';
 export class HospitalController {
   constructor(private readonly hospitalService: HospitalService) {}
 
-  @Post('/add/:token')
-  async createHospital(@Body() dto: CreateHospitalDto, @Param('token') token: string) {
+  @Post('/add')
+  async createHospital(
+    @Body() dto: CreateHospitalDto,
+    @Headers('authorization') authHeader: string,
+  ) {
+    const token = authHeader.split(' ')[1];
     return this.hospitalService.createHospital(dto, token);
   }
 
-  @Get('get/:token')
+  @Get('get/')
   async getAllHospitals(
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
-    @Param('token') token: string,
+    @Headers('authorization') authHeader: string,
   ) {
+    const token = authHeader.split(' ')[1];
     return this.hospitalService.getAllHospitals(page, limit, token);
   }
   @Get('get-all')

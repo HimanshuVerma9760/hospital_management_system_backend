@@ -8,6 +8,8 @@ import {
   Delete,
   Query,
   ParseIntPipe,
+  Req,
+  Headers,
 } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
 import { CreateDoctorDto, UpdateDoctorDto } from './dto/doctor.dto';
@@ -16,22 +18,23 @@ import { CreateDoctorDto, UpdateDoctorDto } from './dto/doctor.dto';
 export class DoctorController {
   constructor(private readonly doctorService: DoctorService) {}
 
-  @Post('/add/:token')
+  @Post('/add')
   async createDoctor(
-    @Param('token') token: string,
     @Body() dto: CreateDoctorDto,
+    @Headers('authorization') authHeader: string,
   ) {
-    return this.doctorService.createDoctor(dto, token);
+    return this.doctorService.createDoctor(dto, authHeader);
   }
 
-  @Get('get-doctors/:token')
+  @Get('get-doctors/')
   async getAllDoctors(
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
-    @Query('specialization') specialization: string,
-    @Param('token') token: string,
+    @Query('specialization', ParseIntPipe) specialization: number,
+    @Headers('authorization') authHeader: string,
   ) {
-    return this.doctorService.getAllDoctors(page, limit, specialization ,token);
+    const token = authHeader.split(' ')[1];
+    return this.doctorService.getAllDoctors(page, limit, specialization, token);
   }
   @Get('get-all')
   async getDoctors() {
@@ -43,29 +46,39 @@ export class DoctorController {
     return this.doctorService.getDoctorById(id);
   }
 
-  @Put('/update/:id/:token')
+  @Put('/update/:id')
   async updateDoctor(
     @Param('id') id: number,
     @Body() dto: UpdateDoctorDto,
-    @Param('token') token: string,
+    @Headers('authorization') authHeader: string,
   ) {
+    const token = authHeader.split(' ')[1];
     return this.doctorService.updateDoctor(id, dto, token);
   }
-  @Get('restore/:id/:token')
-  async restoreDoctor(@Param('id') id: number, @Param('token') token: string) {
+  @Get('restore/:id')
+  async restoreDoctor(
+    @Param('id') id: number,
+    @Headers('authorization') authHeader: string,
+  ) {
+    const token = authHeader.split(' ')[1];
     return this.doctorService.restoreDoctor(id, token);
   }
 
-  @Delete(':id/soft/:token')
+  @Delete(':id/soft')
   async softDeleteDoctor(
     @Param('id') id: number,
-    @Param('token') token: string,
+    @Headers('authorization') authHeader: string,
   ) {
+    const token = authHeader.split(' ')[1];
     return this.doctorService.softDeleteDoctor(id, token);
   }
 
-  @Delete(':id/:token')
-  async deleteDoctor(@Param('id') id: number, @Param('token') token: string) {
+  @Delete(':id')
+  async deleteDoctor(
+    @Param('id') id: number,
+    @Headers('authorization') authHeader: string,
+  ) {
+    const token = authHeader.split(' ')[1];
     return this.doctorService.deleteDoctor(id, token);
   }
 }
