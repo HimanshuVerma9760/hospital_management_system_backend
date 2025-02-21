@@ -18,8 +18,8 @@ import { DoctorController } from './doctor/doctor.controller';
 import { DoctorService } from './doctor/doctor.service';
 import { HospitalController } from './hospital/hospital.controller';
 import { HospitalService } from './hospital/hospital.service';
-import SuperAdminController from './super-admin/superAdmin.controller';
-import SuperAdminService from './super-admin/superAdmin.service';
+// import SuperAdminController from './super-admin/superAdmin.controller';
+// import SuperAdminService from './super-admin/superAdmin.service';
 import AdminController from './admin/admin.controller';
 import AdminService from './admin/admin.service';
 import PatientController from './patients/patient.controller';
@@ -75,7 +75,7 @@ import Disease from './Models/disease.model';
     AppController,
     DoctorController,
     HospitalController,
-    SuperAdminController,
+    // SuperAdminController,
     AdminController,
     PatientController,
   ],
@@ -83,7 +83,7 @@ import Disease from './Models/disease.model';
     AppService,
     DoctorService,
     HospitalService,
-    SuperAdminService,
+    // SuperAdminService,
     AdminService,
     PatientService,
   ],
