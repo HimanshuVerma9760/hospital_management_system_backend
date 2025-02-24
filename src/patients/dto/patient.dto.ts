@@ -14,8 +14,8 @@ export class AddPatientDto {
   name: string;
 
   @IsNotEmpty({ message: 'Disease cannot be Empty!' })
-  @IsString({ message: 'Disease must be a String!' })
-  disease: string;
+  @IsNumber({}, { message: 'Disease Id must be number' })
+  disease_id: number;
 
   @IsNotEmpty({ message: 'City Id cannot be Empty!' })
   @IsNumber({}, { message: 'City Id must be number' })
