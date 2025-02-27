@@ -18,14 +18,20 @@ import { DoctorController } from './doctor/doctor.controller';
 import { DoctorService } from './doctor/doctor.service';
 import { HospitalController } from './hospital/hospital.controller';
 import { HospitalService } from './hospital/hospital.service';
-// import SuperAdminController from './super-admin/superAdmin.controller';
-// import SuperAdminService from './super-admin/superAdmin.service';
-// import AdminController from './admin/admin.controller';
-// import AdminService from './admin/admin.service';
 import PatientController from './patients/patient.controller';
 import PatientService from './patients/patient.service';
 import Specialization from './Models/specialization.model';
 import Disease from './Models/disease.model';
+import AppointmentsController from './appointments/appointments.controller';
+import AppointmentsService from './appointments/appointments.service';
+import { Appointment } from './Models/appointment.model';
+import { Order } from './Models/order.model';
+import OrdersController from './orders/orders.controller';
+import OrdersService from './orders/orders.service';
+import { PaymentController } from './payments/payment.controller';
+import PaymentService from './payments/payment.service';
+import { WebHookController } from './payments/Webhook/webhook.controller';
+import WebhookService from './payments/Webhook/webhook.service';
 
 @Module({
   imports: [
@@ -33,7 +39,6 @@ import Disease from './Models/disease.model';
     SequelizeModule.forRoot({
       dialect: 'mysql',
       host: 'localhost',
-      // port: 3306,
       username: 'Himanshu9760',
       password: 'Himanshu2512@35412879',
       database: 'hospital_management_system',
@@ -51,6 +56,8 @@ import Disease from './Models/disease.model';
         Specialization,
         RoleHasModule,
         Disease,
+        Appointment,
+        Order,
       ],
       autoLoadModels: true,
       synchronize: false,
@@ -69,23 +76,29 @@ import Disease from './Models/disease.model';
       RoleHasModule,
       Specialization,
       Disease,
+      Appointment,
+      Order,
     ]),
   ],
   controllers: [
     AppController,
     DoctorController,
     HospitalController,
-    // SuperAdminController,
-    // AdminController,
     PatientController,
+    AppointmentsController,
+    OrdersController,
+    PaymentController,
+    WebHookController
   ],
   providers: [
     AppService,
     DoctorService,
     HospitalService,
-    // SuperAdminService,
-    // AdminService,
     PatientService,
+    AppointmentsService,
+    OrdersService,
+    PaymentService,
+    WebhookService
   ],
 })
 export class AppModule {}

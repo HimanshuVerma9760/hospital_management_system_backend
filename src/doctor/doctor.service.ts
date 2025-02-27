@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateDoctorDto, UpdateDoctorDto } from './dto/doctor.dto';
 import Doctor from 'src/Models/doctor.model';
 import * as jwt from 'jsonwebtoken';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class DoctorService {
@@ -28,19 +29,39 @@ export class DoctorService {
     if (doctorName[0] !== 'Dr.') {
       dto.name = 'Dr. ' + dto.name;
     }
-    const result = await this.doctorModel.create(dto as any);
-    return {
-      response: 'Success',
-      message: 'Successfully Added Doctor',
-      statusCode: '201',
-      result,
-    };
+    const isUnique = await this.checkDoctorDuplicacy(dto);
+    if (isUnique) {
+      const result = await this.doctorModel.create(dto as any);
+      return {
+        response: 'Success',
+        message: 'Successfully Added Doctor',
+        statusCode: '201',
+        result,
+      };
+    } else {
+      throw new HttpException('Duplicate entry', 500);
+    }
   }
 
   async getDoctors() {
     const result = await this.doctorModel.findAll({
       where: {
         status: true,
+      },
+      include: { all: true },
+    });
+    return {
+      response: 'Success',
+      statusCode: '202',
+      message: 'Successfully fetched all doctors',
+      result,
+    };
+  }
+  async getDoctorsForAppointment(hospitalId: number) {
+    const result = await this.doctorModel.findAll({
+      where: {
+        status: true,
+        hospital_id: hospitalId,
       },
       include: { all: true },
     });
@@ -111,28 +132,47 @@ export class DoctorService {
       doctor,
     };
   }
-
+  async checkDoctorDuplicacy(doctor: any) {
+    const exsistingDoctor = await this.doctorModel.findOne({
+      where: {
+        name: { [Op.like]: doctor.name },
+        city_id: doctor.city_id,
+        specialization_id: doctor.specialization_id,
+        hospital_id: doctor.hospital_id,
+      },
+    });
+    if (exsistingDoctor) {
+      throw new HttpException('Duplicate entry!', 500);
+    } else {
+      return true;
+    }
+  }
   async updateDoctor(id: number, dto: UpdateDoctorDto, token: string) {
     const role = this.verifyToken(token);
     if (!(role === 'Super-Admin' || role === 'Admin')) {
       throw new HttpException('Not Authorized', 401);
     }
     const doctor = await this.getDoctorById(id);
-    let updatedDoctor: any;
-    try {
-      updatedDoctor = await doctor.doctor.update(dto);
-    } catch (error) {
-      throw new HttpException('Error Occure while updating doctor', 404);
-    }
-    if (updatedDoctor) {
-      return {
-        response: 'Success',
-        message: 'Successfully updated doctor info',
-        statusCode: '201',
-        updatedDoctor,
-      };
+    const isUnique = await this.checkDoctorDuplicacy(doctor.doctor);
+    if (isUnique) {
+      let updatedDoctor: any;
+      try {
+        updatedDoctor = await doctor.doctor.update(dto);
+      } catch (error) {
+        throw new HttpException('Error Occure while updating doctor', 500);
+      }
+      if (updatedDoctor) {
+        return {
+          response: 'Success',
+          message: 'Successfully updated doctor info',
+          statusCode: '201',
+          updatedDoctor,
+        };
+      } else {
+        throw new HttpException('Error Occure while updating doctor', 500);
+      }
     } else {
-      throw new HttpException('Error Occure while updating doctor', 404);
+      throw new HttpException('Duplicate entry!', 406);
     }
   }
 

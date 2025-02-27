@@ -56,7 +56,7 @@ export class AppService {
       return {
         reponse: 'Success',
         message: 'Successfully fetched States',
-        statusCode: '200',
+        statusCode: 200,
         result,
       };
     } catch (error) {
@@ -70,7 +70,7 @@ export class AppService {
       return {
         response: 'Success',
         message: 'Successfully fetched Specializations',
-        statusCode: '200',
+        statusCode: 200,
         result,
       };
     } catch (error) {

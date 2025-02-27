@@ -47,6 +47,10 @@ export default class Doctor extends Model<Doctor> {
 
   @HasMany(() => Patient)
   patient: Patient;
+
+  @Column({ type: DataType.NUMBER, allowNull: false })
+  fees: number;
+
   @Column({ type: DataType.DATE, allowNull: true, defaultValue: null })
   deletedAt?: Date;
 

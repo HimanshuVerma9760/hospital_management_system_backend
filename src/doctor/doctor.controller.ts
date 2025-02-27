@@ -40,6 +40,10 @@ export class DoctorController {
   async getDoctors() {
     return this.doctorService.getDoctors();
   }
+  @Get('appointment/get-all')
+  async getDoctorsForAppointment(@Query("hospitalId", ParseIntPipe) hospitalId:number) {
+    return this.doctorService.getDoctorsForAppointment(hospitalId);
+  }
 
   @Get('get/:id')
   async getDoctorById(@Param('id') id: number) {

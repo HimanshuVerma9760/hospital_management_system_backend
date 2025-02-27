@@ -25,6 +25,10 @@ export class CreateDoctorDto {
   @IsNotEmpty({ message: 'City Id cannot be Empty!' })
   @IsNumber({}, { message: 'City Id must be number' })
   city_id: number;
+
+  @IsNotEmpty({ message: 'Fees cannot be Empty!' })
+  @IsNumber({}, { message: 'Fees must be number' })
+  fees: number;
 }
 
 export class UpdateDoctorDto {
@@ -48,4 +52,9 @@ export class UpdateDoctorDto {
   @IsNotEmpty({ message: 'City Id cannot be Empty!' })
   @IsNumber({}, { message: 'City Id must be number' })
   city_id?: number;
+
+  @IsOptional()
+  @IsNotEmpty({ message: 'Fees cannot be Empty!' })
+  @IsNumber({}, { message: 'Fees must be number' })
+  fees?: number;
 }
