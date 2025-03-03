@@ -75,7 +75,7 @@ export class DoctorService {
   async getAllDoctors(
     page: number,
     limit: number,
-    specialization: number,
+    specialization: any,
     token: string,
   ) {
     const role = this.verifyToken(token);
@@ -87,14 +87,11 @@ export class DoctorService {
 
     const offset = (page - 1) * limit;
     let totalCount: number, result: any;
-    if (specialization !== 0) {
+    if (specialization === '0' || !specialization || specialization === '') {
       const { count, rows } = await this.doctorModel.findAndCountAll({
         offset,
         limit,
         distinct: true,
-        where: {
-          specialization_id: specialization,
-        },
         include: { all: true },
       });
       totalCount = count;
@@ -104,6 +101,9 @@ export class DoctorService {
         offset,
         limit,
         distinct: true,
+        where: {
+          specialization_id: specialization,
+        },
         include: { all: true },
       });
       totalCount = count;

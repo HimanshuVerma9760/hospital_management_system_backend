@@ -30,7 +30,7 @@ export class DoctorController {
   async getAllDoctors(
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
-    @Query('specialization', ParseIntPipe) specialization: number,
+    @Query('specialization') specialization: any,
     @Headers('authorization') authHeader: string,
   ) {
     const token = authHeader.split(' ')[1];
@@ -41,7 +41,9 @@ export class DoctorController {
     return this.doctorService.getDoctors();
   }
   @Get('appointment/get-all')
-  async getDoctorsForAppointment(@Query("hospitalId", ParseIntPipe) hospitalId:number) {
+  async getDoctorsForAppointment(
+    @Query('hospitalId', ParseIntPipe) hospitalId: number,
+  ) {
     return this.doctorService.getDoctorsForAppointment(hospitalId);
   }
 
@@ -68,7 +70,7 @@ export class DoctorController {
     return this.doctorService.restoreDoctor(id, token);
   }
 
-  @Delete(':id/soft')
+  @Delete('soft/:id')
   async softDeleteDoctor(
     @Param('id') id: number,
     @Headers('authorization') authHeader: string,

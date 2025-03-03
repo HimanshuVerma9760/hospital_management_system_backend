@@ -54,9 +54,13 @@ export class HospitalController {
     return this.hospitalService.updateHospital(id, dto);
   }
 
-  @Delete(':id/soft')
+  @Delete('delete/soft/:id')
   async softDeleteHospital(@Param('id') id: number) {
     return this.hospitalService.softDeleteHospital(id);
+  }
+  @Get('restore/:id')
+  async restoreHospital(@Param('id') id: number) {
+    return this.hospitalService.restoreHospital(id);
   }
 
   @Delete(':id')

@@ -9,10 +9,10 @@ export default class PatientService {
     @InjectModel(Patient) private readonly patientModel: typeof Patient,
   ) {}
 
-  async getPatients(page: number, limit: number, disease: number) {
+  async getPatients(page: number, limit: number, disease: any) {
     const skip = (page - 1) * limit;
     let totalCount: number, result: any;
-    if (disease === 0) {
+    if (disease === "0" || disease==="" || !disease) {
       const { count, rows } = await this.patientModel.findAndCountAll({
         offset: skip,
         limit,

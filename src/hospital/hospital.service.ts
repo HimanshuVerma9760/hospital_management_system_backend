@@ -29,7 +29,7 @@ export class HospitalService {
     }
   }
 
-  async getAllHospitals(page: number, limit: number, token:string) {
+  async getAllHospitals(page: number, limit: number, token: string) {
     const role = this.verifyToken(token);
     if (!(role === 'Super-Admin' || role === 'Admin')) {
       throw new HttpException('Not Authorized', 401);
@@ -79,17 +79,39 @@ export class HospitalService {
   async updateHospital(id: number, dto: UpdateHospitalDto) {
     const hospital = await this.getHospitalById(id);
     const updatedHospital = await hospital.hospital.update(dto);
-    return { response: 'Success', statusCode: '201', updatedHospital };
+    return {
+      response: 'Success',
+      statusCode: '201',
+      message: 'Successfully updated hospital',
+      updatedHospital,
+    };
   }
 
   async softDeleteHospital(id: number) {
     try {
       const hospital = await this.getHospitalById(id);
-      await hospital.hospital.update({ deletedAt: new Date() });
+      await hospital.hospital.update({ deletedAt: new Date(), status: false });
 
       return {
         response: 'Success',
-        message: 'Successfully marked as deleted',
+        message: 'Successfully marked as in-active',
+        statusCode: '201',
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Some Error Occurred while deleting the Hospital',
+        500,
+      );
+    }
+  }
+  async restoreHospital(id: number) {
+    try {
+      const hospital = await this.getHospitalById(id);
+      await hospital.hospital.update({ status: true });
+
+      return {
+        response: 'Success',
+        message: 'Successfully restored deleted',
         statusCode: '201',
       };
     } catch (error) {

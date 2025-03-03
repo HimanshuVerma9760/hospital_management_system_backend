@@ -27,6 +27,9 @@ export default class Hospital extends Model<Hospital> {
   @Column({ type: DataType.STRING, allowNull: false })
   location: string;
 
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
+  status: boolean;
+
   @ForeignKey(() => City)
   @Column({ type: DataType.INTEGER, allowNull: false })
   city_id: number;

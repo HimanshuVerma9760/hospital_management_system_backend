@@ -20,7 +20,7 @@ export default class PatientController {
   getAllPatients(
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
-    @Query('disease', ParseIntPipe) disease: number,
+    @Query('disease') disease: any,
   ) {
     return this.patientService.getPatients(page, limit, disease);
   }
