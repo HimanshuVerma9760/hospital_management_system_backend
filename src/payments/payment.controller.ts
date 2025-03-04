@@ -8,7 +8,6 @@ export class PaymentController {
 
   @Post('checkout')
   async checkout(@Res() res: Response, @Body() order: any) {
-    console.log(order.order);
     const session = await this.paymentService.createCheckoutSession(
       order.order,
     );

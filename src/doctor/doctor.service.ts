@@ -4,6 +4,7 @@ import { CreateDoctorDto, UpdateDoctorDto } from './dto/doctor.dto';
 import Doctor from 'src/Models/doctor.model';
 import * as jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class DoctorService {
@@ -132,50 +133,54 @@ export class DoctorService {
       doctor,
     };
   }
-  async checkDoctorDuplicacy(doctor: any) {
-    const exsistingDoctor = await this.doctorModel.findOne({
+  async checkDoctorDuplicacy(doctor: any, excludeId?: number) {
+    const doctorDesignation = doctor.name.split(' ')[0];
+    if (doctorDesignation !== 'Dr.') {
+      doctor.name = `Dr. ${doctor.name}`;
+    }
+    const existingDoctor = await this.doctorModel.findOne({
       where: {
-        name: { [Op.like]: doctor.name },
-        city_id: doctor.city_id,
-        specialization_id: doctor.specialization_id,
-        hospital_id: doctor.hospital_id,
+        [Op.and]: [
+          Sequelize.where(
+            Sequelize.fn('LOWER', Sequelize.col('name')),
+            Op.eq,
+            doctor.name.toLowerCase(),
+          ),
+          { city_id: doctor.city_id },
+          { specialization_id: doctor.specialization_id },
+          { hospital_id: doctor.hospital_id },
+          excludeId ? { id: { [Op.ne]: excludeId } } : {},
+        ],
       },
     });
-    if (exsistingDoctor) {
-      throw new HttpException('Duplicate entry!', 500);
-    } else {
-      return true;
+
+    if (existingDoctor) {
+      throw new HttpException('Duplicate entry!', 409);
     }
+
+    return true;
   }
   async updateDoctor(id: number, dto: UpdateDoctorDto, token: string) {
     const role = this.verifyToken(token);
     if (!(role === 'Super-Admin' || role === 'Admin')) {
       throw new HttpException('Not Authorized', 401);
     }
+
     const doctor = await this.getDoctorById(id);
-    const isUnique = await this.checkDoctorDuplicacy(doctor.doctor);
-    if (isUnique) {
-      let updatedDoctor: any;
-      try {
-        updatedDoctor = await doctor.doctor.update(dto);
-      } catch (error) {
-        throw new HttpException('Error Occure while updating doctor', 500);
-      }
-      if (updatedDoctor) {
-        return {
-          response: 'Success',
-          message: 'Successfully updated doctor info',
-          statusCode: '201',
-          updatedDoctor,
-        };
-      } else {
-        throw new HttpException('Error Occure while updating doctor', 500);
-      }
-    } else {
-      throw new HttpException('Duplicate entry!', 406);
+    await this.checkDoctorDuplicacy(dto, id);
+
+    try {
+      const updatedDoctor = await doctor.doctor.update(dto);
+      return {
+        response: 'Success',
+        message: 'Successfully updated doctor info',
+        statusCode: '201',
+        updatedDoctor,
+      };
+    } catch (error) {
+      throw new HttpException('Error occurred while updating doctor', 500);
     }
   }
-
   async softDeleteDoctor(id: number, token: string) {
     const role = this.verifyToken(token);
     if (!(role === 'Super-Admin' || role === 'Admin')) {

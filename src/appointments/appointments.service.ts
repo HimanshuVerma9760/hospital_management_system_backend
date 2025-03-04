@@ -32,17 +32,32 @@ export default class AppointmentsService {
         ` ${appointmentData.appointment_date} ${appointmentData.appointment_time}`,
         'YYYY-MM-DD HH:mm:ss',
       );
+      let newAppointment: any;
+      let orderData: any;
+      if (paymentMethod === 'Card') {
+        newAppointment = await this.appointmentModel.create({
+          ...(appointmentData as any),
+          appointment_datetime: mergedDateTime.toDate(),
+          status: 'Cancelled',
+        });
+        orderData = {
+          appointment_id: newAppointment.id,
+          amount: fees,
+          paymentMethod: paymentMethod,
+          paymentStatus: 'Failed',
+        };
+      } else {
+        newAppointment = await this.appointmentModel.create({
+          ...(appointmentData as any),
+          appointment_datetime: mergedDateTime.toDate(),
+        });
+        orderData = {
+          appointment_id: newAppointment.id,
+          amount: fees,
+          paymentMethod: paymentMethod,
+        };
+      }
 
-      const newAppointment = await this.appointmentModel.create({
-        ...(appointmentData as any),
-        appointment_datetime: mergedDateTime.toDate(),
-      });
-
-      const orderData = {
-        appointment_id: newAppointment.id,
-        amount: fees,
-        paymentMethod: paymentMethod,
-      };
       const newOrder = await this.orderModel.create(orderData as any);
       return {
         response: 'Success',

@@ -42,7 +42,7 @@ export default class PaymentService {
       ],
       mode: 'payment',
       success_url: `http://localhost:5173/payment/success`,
-      cancel_url: `http://localhost:5173/api/payment/cancel`,
+      cancel_url: `http://localhost:5173/users/appointments`,
       metadata: {
         orderId: order.id,
       },

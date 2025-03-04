@@ -15,6 +15,7 @@ export class WebHookController {
   ) {}
   @Post('webhook')
   async stripeWebhook(@Req() req: Request, @Res() res: Response) {
+    console.log('webhook called');
     const sig = req.headers['stripe-signature'] || '';
     let event: any;
     try {
@@ -31,9 +32,15 @@ export class WebHookController {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
       const orderId = session.metadata.orderId;
-      console.log('webhook called');
+      console.log('webhook success called');
       await this.webhookService.success(orderId);
-    }
+    } 
+    // else if (event.type === 'checkout.session.expired') {
+    //   const session = event.data.object;
+    //   const orderId = session.metadata.orderId;
+    //   console.log('webhook session expired called');
+    //   await this.webhookService.cancel(orderId);
+    // }
 
     res.status(200).send('Webhook received');
   }
