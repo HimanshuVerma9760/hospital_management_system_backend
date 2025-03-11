@@ -7,6 +7,7 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { Appointment } from './appointment.model';
+import { v4 as uuidv4 } from 'uuid';
 
 @Table({
   tableName: 'orders',
@@ -44,6 +45,13 @@ export class Order extends Model<Order> {
     defaultValue: 'Cash',
   })
   paymentMethod: string;
+
+  @Column({
+    allowNull: false,
+    type: DataTypes.STRING,
+    defaultValue: uuidv4(),
+  })
+  orderNumber: string;
 
   @Column({
     allowNull: false,

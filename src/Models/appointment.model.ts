@@ -10,6 +10,8 @@ import Disease from './disease.model';
 import Hospital from './hospital.model';
 import Doctor from './doctor.model';
 
+import { v4 as uuidv4 } from 'uuid';
+
 @Table({
   tableName: 'appointments',
   timestamps: true,
@@ -78,6 +80,13 @@ export class Appointment extends Model<Appointment> {
     defaultValue: 'Scheduled',
   })
   status: string;
+
+  @Column({
+    allowNull: false,
+    type: DataTypes.STRING,
+    defaultValue: uuidv4(),
+  })
+  appointmentNumber: string;
 
   @Column({
     allowNull: false,

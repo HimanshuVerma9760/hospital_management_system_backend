@@ -19,9 +19,7 @@ export class DoctorService {
     }
   }
 
-  async createDoctor(dto: CreateDoctorDto, authHeader: string) {
-    console.log(authHeader);
-    const token = authHeader.split(' ')[1];
+  async createDoctor(dto: CreateDoctorDto, token: string) {
     const role = this.verifyToken(token);
     if (!(role === 'Super-Admin' || role === 'Admin')) {
       throw new HttpException('Not Authorized', 401);

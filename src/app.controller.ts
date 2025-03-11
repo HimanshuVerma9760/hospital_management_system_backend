@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Headers, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpException, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import userDTO from './dto/user.dto';
+import userDTO from './user/dto/user.dto';
 
 @Controller('/api')
 export class AppController {
@@ -12,7 +12,12 @@ export class AppController {
   }
   @Get('/verify')
   verify(@Headers('authorization') authHeader: string) {
-    const token = authHeader.split(' ')[1];
+     let token: string;
+        try {
+          token = authHeader.split(' ')[1];
+        } catch (error) {
+          throw new HttpException('Not Authorized', 401);
+        }
     return this.appService.verify(token);
   }
   @Get('/states')

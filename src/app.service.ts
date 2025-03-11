@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import City from './Models/city.model';
 import { State } from './Models/state.model';
-import userDTO from './dto/user.dto';
+import userDTO from './user/dto/user.dto';
 import { User } from './Models/user.model';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
@@ -96,6 +96,7 @@ export class AppService {
         if (passwordMatch) {
           const token = jwt.sign(
             {
+              id: foundUser.userId,
               name: foundUser.name,
               email: foundUser.email,
               role: foundUser.role.name,

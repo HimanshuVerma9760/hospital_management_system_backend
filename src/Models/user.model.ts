@@ -8,6 +8,7 @@ import {
 } from 'sequelize-typescript';
 import City from './city.model';
 import Role from './role.model';
+import { v4 as uuidv4 } from 'uuid';
 
 @Table({ tableName: 'Users', timestamps: true })
 export class User extends Model<User> {
@@ -21,6 +22,9 @@ export class User extends Model<User> {
 
   @Column({ type: DataType.STRING, allowNull: false })
   name: string;
+
+  @Column({ type: DataType.STRING, allowNull: false, defaultValue: uuidv4() })
+  userId: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
   email: string;

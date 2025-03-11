@@ -10,6 +10,8 @@ import {
   ParseIntPipe,
   Req,
   Headers,
+  UnauthorizedException,
+  HttpException,
 } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
 import { CreateDoctorDto, UpdateDoctorDto } from './dto/doctor.dto';
@@ -23,7 +25,13 @@ export class DoctorController {
     @Body() dto: CreateDoctorDto,
     @Headers('authorization') authHeader: string,
   ) {
-    return this.doctorService.createDoctor(dto, authHeader);
+    let token: string;
+    try {
+      token = authHeader.split(' ')[1];
+    } catch (error) {
+      throw new HttpException('Not Authorized', 401);
+    }
+    return this.doctorService.createDoctor(dto, token);
   }
 
   @Get('get-doctors/')
@@ -33,7 +41,12 @@ export class DoctorController {
     @Query('specialization') specialization: any,
     @Headers('authorization') authHeader: string,
   ) {
-    const token = authHeader.split(' ')[1];
+    let token: string;
+    try {
+      token = authHeader.split(' ')[1];
+    } catch (error) {
+      throw new HttpException('Not Authorized', 401);
+    }
     return this.doctorService.getAllDoctors(page, limit, specialization, token);
   }
   @Get('get-all')
@@ -58,7 +71,12 @@ export class DoctorController {
     @Body() dto: UpdateDoctorDto,
     @Headers('authorization') authHeader: string,
   ) {
-    const token = authHeader.split(' ')[1];
+    let token: string;
+    try {
+      token = authHeader.split(' ')[1];
+    } catch (error) {
+      throw new HttpException('Not Authorized', 401);
+    }
     return this.doctorService.updateDoctor(id, dto, token);
   }
   @Get('restore/:id')
@@ -66,7 +84,12 @@ export class DoctorController {
     @Param('id') id: number,
     @Headers('authorization') authHeader: string,
   ) {
-    const token = authHeader.split(' ')[1];
+    let token: string;
+    try {
+      token = authHeader.split(' ')[1];
+    } catch (error) {
+      throw new HttpException('Not Authorized', 401);
+    }
     return this.doctorService.restoreDoctor(id, token);
   }
 
@@ -75,7 +98,12 @@ export class DoctorController {
     @Param('id') id: number,
     @Headers('authorization') authHeader: string,
   ) {
-    const token = authHeader.split(' ')[1];
+    let token: string;
+    try {
+      token = authHeader.split(' ')[1];
+    } catch (error) {
+      throw new HttpException('Not Authorized', 401);
+    }
     return this.doctorService.softDeleteDoctor(id, token);
   }
 
@@ -84,7 +112,12 @@ export class DoctorController {
     @Param('id') id: number,
     @Headers('authorization') authHeader: string,
   ) {
-    const token = authHeader.split(' ')[1];
+    let token: string;
+    try {
+      token = authHeader.split(' ')[1];
+    } catch (error) {
+      throw new HttpException('Not Authorized', 401);
+    }
     return this.doctorService.deleteDoctor(id, token);
   }
 }

@@ -32,6 +32,10 @@ import { PaymentController } from './payments/payment.controller';
 import PaymentService from './payments/payment.service';
 import { WebHookController } from './payments/Webhook/webhook.controller';
 import WebhookService from './payments/Webhook/webhook.service';
+import Forms from './Models/forms.model';
+import FormInputs from './Models/formInput.model';
+import FormController from './forms/form.controller';
+import FormService from './forms/form.service';
 
 @Module({
   imports: [
@@ -58,6 +62,8 @@ import WebhookService from './payments/Webhook/webhook.service';
         Disease,
         Appointment,
         Order,
+        Forms,
+        FormInputs,
       ],
       autoLoadModels: true,
       synchronize: false,
@@ -78,6 +84,8 @@ import WebhookService from './payments/Webhook/webhook.service';
       Disease,
       Appointment,
       Order,
+      Forms,
+      FormInputs,
     ]),
   ],
   controllers: [
@@ -88,7 +96,8 @@ import WebhookService from './payments/Webhook/webhook.service';
     AppointmentsController,
     OrdersController,
     PaymentController,
-    WebHookController
+    WebHookController,
+    FormController,
   ],
   providers: [
     AppService,
@@ -98,7 +107,8 @@ import WebhookService from './payments/Webhook/webhook.service';
     AppointmentsService,
     OrdersService,
     PaymentService,
-    WebhookService
+    WebhookService,
+    FormService,
   ],
 })
 export class AppModule {}
