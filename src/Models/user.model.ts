@@ -31,6 +31,8 @@ export class User extends Model<User> {
 
   @Column({ type: DataType.STRING, allowNull: false })
   password: string;
+  @Column({ type: DataType.STRING, allowNull: true, defaultValue: null })
+  dp: string;
 
   @ForeignKey(() => City)
   @Column({ type: DataType.INTEGER, allowNull: false })

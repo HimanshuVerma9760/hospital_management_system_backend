@@ -36,9 +36,13 @@ import Forms from './Models/forms.model';
 import FormInputs from './Models/formInput.model';
 import FormController from './forms/form.controller';
 import FormService from './forms/form.service';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
+    MulterModule.register({
+      dest: './uploads',
+    }),
     ConfigModule.forRoot(),
     SequelizeModule.forRoot({
       dialect: 'mysql',

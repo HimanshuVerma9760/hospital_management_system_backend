@@ -9,6 +9,9 @@ import * as jwt from 'jsonwebtoken';
 import exp from 'constants';
 import Specialization from './Models/specialization.model';
 import Disease from './Models/disease.model';
+import * as fs from 'fs';
+import * as path from 'path';
+import { where } from 'sequelize';
 
 @Injectable()
 export class AppService {
@@ -31,6 +34,8 @@ export class AppService {
           statusCode: '200',
           message: 'Successfully Verified User',
           role: verifyToken.role,
+          // dp: verifyToken.dp,
+          id: verifyToken.id,
         };
       }
     } catch (error) {
@@ -50,6 +55,35 @@ export class AppService {
       throw new HttpException('Some Error Occurred while fetching Cities', 500);
     }
   }
+
+  async saveFileUrl(fileName: string, token: string) {
+    const result = await this.verify(token);
+    if (!result?.response) {
+      throw new HttpException('Unauthorized', 401);
+    }
+    try {
+      const user = await this.userModel.findOne({
+        where: {
+          userId: result.id,
+        },
+      });
+      if (user) {
+        const updatedUser = await user.update({ dp: fileName });
+        if (updatedUser) {
+          return {
+            response: 'Success',
+            statusCode: 200,
+            message: 'Successfully updated profile picture',
+          };
+        }
+      }
+      throw new HttpException('Internal Server Error', 500);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException('Internal Server Error', 500);
+    }
+  }
+
   async getAllStates() {
     try {
       const result = await this.stateModel.findAll();
@@ -80,6 +114,26 @@ export class AppService {
       );
     }
   }
+  async getUserById(id: string) {
+    try {
+      const result = await this.userModel.findOne({
+        where: {
+          userId: id,
+        },
+      });
+      if (result) {
+        return {
+          response: 'Success',
+          statusCode: 200,
+          message: 'Succesfully fetched user',
+          result,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+      throw new HttpException('Error occurred while getting user', 500);
+    }
+  }
   async login(userData: userDTO) {
     try {
       const foundUser: any = await this.userModel.findOne({
@@ -100,6 +154,7 @@ export class AppService {
               name: foundUser.name,
               email: foundUser.email,
               role: foundUser.role.name,
+              // dp: foundUser.dp,
             },
             process.env.USER_KEY,
             { expiresIn: '1h' },
