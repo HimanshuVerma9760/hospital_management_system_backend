@@ -39,6 +39,7 @@ export class DoctorController {
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
     @Query('specialization') specialization: any,
+    @Query('keyword') keyword: string,
     @Headers('authorization') authHeader: string,
   ) {
     let token: string;
@@ -47,7 +48,13 @@ export class DoctorController {
     } catch (error) {
       throw new HttpException('Not Authorized', 401);
     }
-    return this.doctorService.getAllDoctors(page, limit, specialization, token);
+    return this.doctorService.getAllDoctors(
+      page,
+      limit,
+      specialization,
+      keyword,
+      token,
+    );
   }
   @Get('get-all')
   async getDoctors() {

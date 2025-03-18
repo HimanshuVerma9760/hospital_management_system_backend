@@ -37,6 +37,8 @@ import FormInputs from './Models/formInput.model';
 import FormController from './forms/form.controller';
 import FormService from './forms/form.service';
 import { MulterModule } from '@nestjs/platform-express';
+import UserController from './user/user.controller';
+import UserService from './user/user.service';
 
 @Module({
   imports: [
@@ -102,6 +104,7 @@ import { MulterModule } from '@nestjs/platform-express';
     PaymentController,
     WebHookController,
     FormController,
+    UserController,
   ],
   providers: [
     AppService,
@@ -113,6 +116,7 @@ import { MulterModule } from '@nestjs/platform-express';
     PaymentService,
     WebhookService,
     FormService,
+    UserService,
   ],
 })
 export class AppModule {}

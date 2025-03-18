@@ -5,6 +5,9 @@ import Doctor from 'src/Models/doctor.model';
 import * as jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
+import City from 'src/Models/city.model';
+import Hospital from 'src/Models/hospital.model';
+import Specialization from 'src/Models/specialization.model';
 
 @Injectable()
 export class DoctorService {
@@ -56,6 +59,7 @@ export class DoctorService {
       result,
     };
   }
+
   async getDoctorsForAppointment(hospitalId: number) {
     const result = await this.doctorModel.findAll({
       where: {
@@ -71,53 +75,6 @@ export class DoctorService {
       result,
     };
   }
-  async getAllDoctors(
-    page: number,
-    limit: number,
-    specialization: any,
-    token: string,
-  ) {
-    const role = this.verifyToken(token);
-    if (!(role === 'Super-Admin' || role === 'Admin')) {
-      throw new HttpException('Not Authorized', 401);
-    }
-    if (page < 1) page = 1;
-    if (limit < 1) limit = 5;
-
-    const offset = (page - 1) * limit;
-    let totalCount: number, result: any;
-    if (specialization === '0' || !specialization || specialization === '') {
-      const { count, rows } = await this.doctorModel.findAndCountAll({
-        offset,
-        limit,
-        distinct: true,
-        include: { all: true },
-      });
-      totalCount = count;
-      result = rows;
-    } else {
-      const { count, rows } = await this.doctorModel.findAndCountAll({
-        offset,
-        limit,
-        distinct: true,
-        where: {
-          specialization_id: specialization,
-        },
-        include: { all: true },
-      });
-      totalCount = count;
-      result = rows;
-    }
-    return {
-      response: 'Success',
-      message: 'Successfully fetched all doctors',
-      statusCode: 200,
-      totalRecords: totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-      result: result,
-    };
-  }
 
   async getDoctorById(id: number) {
     const doctor = await this.doctorModel.findByPk(id, {
@@ -131,6 +88,7 @@ export class DoctorService {
       doctor,
     };
   }
+
   async checkDoctorDuplicacy(doctor: any, excludeId?: number) {
     const doctorDesignation = doctor.name.split(' ')[0];
     if (doctorDesignation !== 'Dr.') {
@@ -158,6 +116,7 @@ export class DoctorService {
 
     return true;
   }
+
   async updateDoctor(id: number, dto: UpdateDoctorDto, token: string) {
     const role = this.verifyToken(token);
     if (!(role === 'Super-Admin' || role === 'Admin')) {
@@ -179,6 +138,7 @@ export class DoctorService {
       throw new HttpException('Error occurred while updating doctor', 500);
     }
   }
+
   async softDeleteDoctor(id: number, token: string) {
     const role = this.verifyToken(token);
     if (!(role === 'Super-Admin' || role === 'Admin')) {
@@ -199,6 +159,7 @@ export class DoctorService {
       );
     }
   }
+
   async restoreDoctor(id: number, token: string) {
     const role = this.verifyToken(token);
     if (!(role === 'Super-Admin' || role === 'Admin')) {
@@ -239,5 +200,78 @@ export class DoctorService {
         404,
       );
     }
+  }
+
+  async getAllDoctors(
+    page: number,
+    limit: number,
+    specialization_id: any,
+    keyword: string,
+    token: string,
+  ) {
+    const role = this.verifyToken(token);
+    if (!(role === 'Super-Admin' || role === 'Admin')) {
+      throw new HttpException('Not Authorized', 401);
+    }
+
+    page = Math.max(page, 1);
+    limit = Math.max(limit, 5);
+    const offset = (page - 1) * limit;
+
+    let whereCondition: any = {};
+
+    if (keyword && keyword.trim().length > 0) {
+      whereCondition[Op.or] = [
+        Sequelize.where(
+          Sequelize.fn('REPLACE', Sequelize.col('Doctor.name'), 'Dr. ', ''),
+          { [Op.like]: `%${keyword}%` },
+        ),
+        Sequelize.literal(`city.name LIKE '%${keyword}%'`),
+        Sequelize.literal(`hospital.name LIKE '%${keyword}%'`),
+        Sequelize.literal(`specialization.name LIKE '%${keyword}%'`),
+      ];
+    }
+
+    if (specialization_id && specialization_id !== '0') {
+      whereCondition.specialization_id = specialization_id;
+    }
+
+    const { count, rows } = await this.doctorModel.findAndCountAll({
+      offset,
+      limit,
+      distinct: true,
+      where: whereCondition,
+      include: [
+        {
+          model: City,
+          as: 'city',
+          required: false,
+          attributes: ['id', 'name'],
+        },
+        {
+          model: Hospital,
+          as: 'hospital',
+          required: false,
+          attributes: ['id', 'name'],
+        },
+        {
+          model: Specialization,
+          as: 'specialization',
+          required: false,
+          attributes: ['id', 'name'],
+        },
+      ],
+      logging: console.log,
+    });
+
+    return {
+      response: 'Success',
+      message: 'Successfully fetched all doctors',
+      statusCode: 200,
+      totalRecords: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      result: rows,
+    };
   }
 }

@@ -31,10 +31,11 @@ export class HospitalController {
   async getAllHospitals(
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
+    @Query('keyword') keyword: string,
     @Headers('authorization') authHeader: string,
   ) {
     const token = authHeader.split(' ')[1];
-    return this.hospitalService.getAllHospitals(page, limit, token);
+    return this.hospitalService.getAllHospitals(page, limit, keyword, token);
   }
   @Get('get-all')
   async getHospitals() {

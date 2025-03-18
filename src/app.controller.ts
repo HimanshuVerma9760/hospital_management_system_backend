@@ -14,8 +14,6 @@ import { AppService } from './app.service';
 import userDTO from './user/dto/user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express, Request } from 'express';
-import * as path from 'path';
-import * as fs from 'fs';
 
 @Controller('/api')
 export class AppController {

@@ -21,8 +21,9 @@ export default class PatientController {
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
     @Query('disease') disease: any,
+    @Query('keyword') keyword: string,
   ) {
-    return this.patientService.getPatients(page, limit, disease);
+    return this.patientService.getPatients(page, limit, disease, keyword);
   }
 
   @Post('add')

@@ -3,6 +3,9 @@ import { InjectModel } from '@nestjs/sequelize';
 import Hospital from 'src/Models/hospital.model';
 import { CreateHospitalDto, UpdateHospitalDto } from './dto/hospital.dto';
 import * as jwt from 'jsonwebtoken';
+import City from 'src/Models/city.model';
+import { Op, Sequelize } from 'sequelize';
+import Doctor from 'src/Models/doctor.model';
 
 @Injectable()
 export class HospitalService {
@@ -29,28 +32,94 @@ export class HospitalService {
     }
   }
 
-  async getAllHospitals(page: number, limit: number, token: string) {
+  // async getAllHospitals(page: number, limit: number, token: string) {
+  //   const role = this.verifyToken(token);
+  //   if (!(role === 'Super-Admin' || role === 'Admin')) {
+  //     throw new HttpException('Not Authorized', 401);
+  //   }
+  //   if (page < 1) page = 1;
+  //   if (limit < 1) limit = 5;
+  //   const skip = (page - 1) * limit;
+  //   const { count, rows } = await this.hospitalModel.findAndCountAll({
+  //     offset: skip,
+  //     limit: limit,
+  //     distinct: true,
+  //     include: { all: true },
+  //   });
+  //   console.log('count: ', count);
+  //   return {
+  //     response: 'Success',
+  //     message: 'Successfully fetched all hospitals',
+  //     statusCode: '200',
+  //     totalRecords: count,
+  //     result: rows,
+  //   };
+  // }
+
+  async getAllHospitals(
+    page: number,
+    limit: number,
+    keyword: string,
+    token: string,
+  ) {
     const role = this.verifyToken(token);
     if (!(role === 'Super-Admin' || role === 'Admin')) {
       throw new HttpException('Not Authorized', 401);
     }
-    if (page < 1) page = 1;
-    if (limit < 1) limit = 5;
-    const skip = (page - 1) * limit;
-    const { count, rows } = await this.hospitalModel.findAndCountAll({
-      offset: skip,
-      limit: limit,
-      distinct: true,
-      include: { all: true },
-    });
-    console.log('count: ', count);
-    return {
-      response: 'Success',
-      message: 'Successfully fetched all hospitals',
-      statusCode: '200',
-      totalRecords: count,
-      result: rows,
-    };
+
+    // page = Math.max(page, 1);
+    // limit = Math.max(limit, 5);
+    const offset = (page - 1) * limit;
+
+    let whereCondition: any = {};
+
+    if (keyword && keyword.trim().length > 0) {
+      whereCondition[Op.or] = [
+        { name: { [Op.like]: `%${keyword}%` } },
+        { location: { [Op.like]: `%${keyword}%` } },
+        { '$city.name$': { [Op.like]: `%${keyword}%` } },
+      ];
+    }
+
+    try {
+      const { count, rows } = await this.hospitalModel.findAndCountAll({
+        where: whereCondition,
+        include: [
+          {
+            model: City,
+            as: 'city',
+            required: false,
+            attributes: ['id', 'name'],
+          },
+          {
+            model: Doctor,
+            as: 'doctor',
+            required: false,
+            attributes: ['id', 'name'],
+            separate: true,
+          },
+        ],
+        limit,
+        offset,
+        // paranoid: false,
+        logging: console.log,
+      });
+
+      console.log(`Total count: ${count}, Rows returned: ${rows.length}`);
+
+      return {
+        response: 'Success',
+        message: 'Successfully fetched all hospitals',
+        statusCode: 200,
+        totalRecords: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        result: rows,
+      };
+    } catch (error) {
+      console.error('Error occurred at model include:', error);
+      throw new HttpException('Error fetching hospitals', 500);
+    }
   }
 
   async getHospitals() {
