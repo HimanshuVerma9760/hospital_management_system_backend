@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import Patient from 'src/Models/patient.model';
 import { AddPatientDto } from './dto/patient.dto';
@@ -84,6 +84,26 @@ export default class PatientService {
     };
   }
 
+  async getAllPatients() {
+    try {
+      const result = await this.patientModel.findAll({
+        include: {
+          all: true,
+        },
+      });
+      if (result) {
+        return {
+          response: 'Success',
+          statusCode: 200,
+          message: 'Successfully fetched all patients',
+          result,
+        };
+      } 
+      throw new HttpException('No Data Found', 500);
+    } catch (error) {
+      throw new HttpException('Internal Server Error', 500);
+    }
+  }
   async addPatient(dto: AddPatientDto) {
     const result = await this.patientModel.create(dto as any);
     return {

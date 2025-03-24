@@ -1,4 +1,9 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateDoctorDto, UpdateDoctorDto } from './dto/doctor.dto';
 import Doctor from 'src/Models/doctor.model';
@@ -8,10 +13,16 @@ import { Sequelize } from 'sequelize-typescript';
 import City from 'src/Models/city.model';
 import Hospital from 'src/Models/hospital.model';
 import Specialization from 'src/Models/specialization.model';
+import userDTO from 'src/user/dto/user.dto';
+import { User } from 'src/Models/user.model';
 
 @Injectable()
 export class DoctorService {
-  constructor(@InjectModel(Doctor) private doctorModel: typeof Doctor) {}
+  constructor(
+    @InjectModel(Doctor) private doctorModel: typeof Doctor,
+    @InjectModel(User) private userModel: typeof User,
+    @Inject(Sequelize) private readonly sequelize: Sequelize,
+  ) {}
 
   verifyToken(token: string) {
     try {
@@ -22,26 +33,40 @@ export class DoctorService {
     }
   }
 
-  async createDoctor(dto: CreateDoctorDto, token: string) {
-    const role = this.verifyToken(token);
-    if (!(role === 'Super-Admin' || role === 'Admin')) {
-      throw new HttpException('Not Authorized', 401);
-    }
-    const doctorName = dto.name.split(' ');
-    if (doctorName[0] !== 'Dr.') {
-      dto.name = 'Dr. ' + dto.name;
-    }
-    const isUnique = await this.checkDoctorDuplicacy(dto);
-    if (isUnique) {
-      const result = await this.doctorModel.create(dto as any);
-      return {
-        response: 'Success',
-        message: 'Successfully Added Doctor',
-        statusCode: '201',
-        result,
-      };
-    } else {
-      throw new HttpException('Duplicate entry', 500);
+  async createDoctor(dto: CreateDoctorDto, token: string, userData: userDTO) {
+    const transaction = await this.sequelize.transaction();
+    try {
+      const role = this.verifyToken(token);
+      if (!(role === 'Super-Admin' || role === 'Admin')) {
+        throw new HttpException('Not Authorized', 401);
+      }
+      const doctorName = dto.name.split(' ');
+      if (doctorName[0] !== 'Dr.') {
+        dto.name = 'Dr. ' + dto.name;
+      }
+      const isUnique = await this.checkDoctorDuplicacy(dto);
+      if (isUnique) {
+        const user = await this.userModel.create(userData as any, {
+          transaction,
+        });
+        const doctor = { ...dto, userId: user.id };
+        const result = await this.doctorModel.create(doctor as any, {
+          transaction,
+        });
+        await transaction.commit();
+        return {
+          response: 'Success',
+          message: 'Successfully Added Doctor',
+          statusCode: '201',
+          result,
+        };
+      } else {
+        throw new HttpException('Duplicate entry', 500);
+      }
+    } catch (error) {
+      await transaction.rollback();
+      console.log(error);
+      throw new HttpException('Internal server error', 500);
     }
   }
 

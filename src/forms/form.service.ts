@@ -134,7 +134,7 @@ export default class FormService {
       let formResult: any;
       const formData = {
         ...recievedFormData,
-        createdBy: verifiedUser.id,
+        createdBy: verifiedUser.userId,
       };
       console.log(formData);
       formResult = await this.formModel.create(formData as any, {

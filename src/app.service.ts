@@ -34,8 +34,9 @@ export class AppService {
           statusCode: '200',
           message: 'Successfully Verified User',
           role: verifyToken.role,
-          // dp: verifyToken.dp,
+          name: verifyToken.name,
           id: verifyToken.id,
+          userId: verifyToken.userId,
         };
       }
     } catch (error) {
@@ -64,7 +65,7 @@ export class AppService {
     try {
       const user = await this.userModel.findOne({
         where: {
-          userId: result.id,
+          userId: result.userId,
         },
       });
       if (user) {
@@ -150,11 +151,11 @@ export class AppService {
         if (passwordMatch) {
           const token = jwt.sign(
             {
-              id: foundUser.userId,
+              userId: foundUser.userId,
               name: foundUser.name,
               email: foundUser.email,
               role: foundUser.role.name,
-              // dp: foundUser.dp,
+              id: foundUser.id,
             },
             process.env.USER_KEY,
             { expiresIn: '1h' },

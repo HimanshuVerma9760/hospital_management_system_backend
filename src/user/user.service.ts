@@ -22,7 +22,7 @@ export default class UserService {
       if (authResponse.auth) {
         const result = await this.userModel.findOne({
           where: {
-            userId: authResponse.verifiedToken.id,
+            userId: authResponse.verifiedToken.userId,
           },
           include: { all: true },
         });
@@ -51,7 +51,7 @@ export default class UserService {
       if (authResponse.auth) {
         const user = await this.userModel.findOne({
           where: {
-            userId: authResponse.verifiedToken.id,
+            userId: authResponse.verifiedToken.userId,
           },
           include: { all: true },
         });

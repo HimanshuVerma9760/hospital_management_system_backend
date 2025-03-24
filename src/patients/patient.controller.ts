@@ -25,6 +25,10 @@ export default class PatientController {
   ) {
     return this.patientService.getPatients(page, limit, disease, keyword);
   }
+  @Get('get-all')
+  getPatients() {
+    return this.patientService.getAllPatients();
+  }
 
   @Post('add')
   async createHospital(@Body() dto: AddPatientDto) {

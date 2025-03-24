@@ -1,0 +1,160 @@
+const { v4: uuidv4 } = require('uuid');
+
+const bcrypt = require('bcrypt');
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    const hashedPassword = await bcrypt.hash('something', 10);
+
+    const doctors = [
+      {
+        name: 'Dr. Sujeet Champra',
+        email: 'sujeet@gmail.com',
+        password: hashedPassword,
+        city_id: 1,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. S. verma',
+        email: 's.verma123@gmail.com',
+        password: hashedPassword,
+        city_id: 2,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. Jane Smith',
+        email: 'jane@gmail.com',
+        password: hashedPassword,
+        city_id: 2,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. R. Iyer',
+        email: 'riyer@gmail.com',
+        password: hashedPassword,
+        city_id: 6,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. T. Gupta',
+        email: 'tgupta@gmail.com',
+        password: hashedPassword,
+        city_id: 5,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. Himanshu Verma',
+        email: 'himanshu@gmail.com',
+        password: hashedPassword,
+        city_id: 4,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. Himanshu Sharma',
+        email: 'himanshu23sharma@gmail.com',
+        password: hashedPassword,
+        city_id: 4,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. Anmol Sir',
+        email: 'anmol@gmail.com',
+        password: hashedPassword,
+        city_id: 4,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. Paras',
+        email: 'paras@gmail.com',
+        password: hashedPassword,
+        city_id: 7,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. Naveen Sirohi',
+        email: 'naveen23sirohi98@gmail.com',
+        password: hashedPassword,
+        city_id: 1,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. Anuj Tripathi',
+        email: 'anuj12tripathi67@gmail.com',
+        password: hashedPassword,
+        city_id: 5,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. Parveen Deshmukh',
+        email: 'parveendesh45mukh@gmail.com',
+        password: hashedPassword,
+        city_id: 4,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. Sujit param',
+        email: 'sujeet34param67@gmail.com',
+        password: hashedPassword,
+        city_id: 5,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Dr. Kamal Raaj Singh',
+        email: 'kamaldrraj45singh@gmail.com',
+        password: hashedPassword,
+        city_id: 3,
+        role_id: 3,
+        userId: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
+
+    return queryInterface.bulkInsert('users', doctors, {
+      ignoreDuplicates: true,
+    });
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    return queryInterface.bulkDelete('users', { role_id: 3 }, {});
+  },
+};

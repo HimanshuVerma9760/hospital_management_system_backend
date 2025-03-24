@@ -39,6 +39,12 @@ import FormService from './forms/form.service';
 import { MulterModule } from '@nestjs/platform-express';
 import UserController from './user/user.controller';
 import UserService from './user/user.service';
+import MedicineController from './medicines/medicine.controller';
+import MedicineService from './medicines/medicine.service';
+import Medicines from './Models/medicine.model';
+import Prescriptions from './Models/prescription.model';
+import PrescriptionsController from './prescription/prescription.controller';
+import PrescriptionsService from './prescription/prescription.service';
 
 @Module({
   imports: [
@@ -70,6 +76,8 @@ import UserService from './user/user.service';
         Order,
         Forms,
         FormInputs,
+        Medicines,
+        Prescriptions,
       ],
       autoLoadModels: true,
       synchronize: false,
@@ -92,6 +100,8 @@ import UserService from './user/user.service';
       Order,
       Forms,
       FormInputs,
+      Medicines,
+      Prescriptions,
     ]),
   ],
   controllers: [
@@ -105,6 +115,8 @@ import UserService from './user/user.service';
     WebHookController,
     FormController,
     UserController,
+    MedicineController,
+    PrescriptionsController,
   ],
   providers: [
     AppService,
@@ -117,6 +129,8 @@ import UserService from './user/user.service';
     WebhookService,
     FormService,
     UserService,
+    MedicineService,
+    PrescriptionsService,
   ],
 })
 export class AppModule {}

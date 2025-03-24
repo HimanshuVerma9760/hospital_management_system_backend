@@ -11,6 +11,8 @@ import Hospital from './hospital.model';
 import City from './city.model';
 import Patient from './patient.model';
 import Specialization from './specialization.model';
+import { User } from './user.model';
+import Prescriptions from './prescription.model';
 
 @Table({ tableName: 'Doctors', timestamps: true })
 export default class Doctor extends Model<Doctor> {
@@ -61,4 +63,14 @@ export default class Doctor extends Model<Doctor> {
   updatedAt?: any;
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
   status: boolean;
+
+  @ForeignKey(() => User)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  userId: number;
+
+  @BelongsTo(() => User)
+  user: User;
+
+  @HasMany(() => Prescriptions)
+  prescription: Prescriptions;
 }
