@@ -23,7 +23,7 @@ export class WebHookController {
         req.body,
         sig,
         process.env.STRIPE_WEBHOOK_SECRET || '',
-      );
+      ); 
     } catch (err) {
       console.error('Webhook signature verification failed:', err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -35,12 +35,6 @@ export class WebHookController {
       console.log('webhook success called');
       await this.webhookService.success(orderId);
     } 
-    // else if (event.type === 'checkout.session.expired') {
-    //   const session = event.data.object;
-    //   const orderId = session.metadata.orderId;
-    //   console.log('webhook session expired called');
-    //   await this.webhookService.cancel(orderId);
-    // }
 
     res.status(200).send('Webhook received');
   }

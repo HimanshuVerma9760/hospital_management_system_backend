@@ -72,8 +72,8 @@ export class AppController {
     }
     return this.appService.saveFileUrl(file.filename, token);
   }
-  @Get('get/user/:id')
-  getUserById(@Param('id') id: string) {
+  @Get('get/user/:userId')
+  getUserById(@Param('userId') id: string) {
     return this.appService.getUserById(id);
   }
 }

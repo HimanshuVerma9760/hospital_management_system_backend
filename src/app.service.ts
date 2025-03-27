@@ -129,6 +129,8 @@ export class AppService {
           message: 'Succesfully fetched user',
           result,
         };
+      } else {
+        throw new HttpException('User not found', 404);
       }
     } catch (error) {
       console.log(error);

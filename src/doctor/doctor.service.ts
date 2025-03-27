@@ -236,7 +236,7 @@ export class DoctorService {
   ) {
     const role = this.verifyToken(token);
     if (!(role === 'Super-Admin' || role === 'Admin')) {
-      throw new HttpException('Not Authorized', 401);
+      throw new HttpException('unidentified', 401);
     }
 
     page = Math.max(page, 1);

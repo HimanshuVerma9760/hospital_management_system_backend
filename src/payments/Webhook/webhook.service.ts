@@ -10,26 +10,6 @@ export default class WebhookService {
     @InjectModel(Appointment) private readonly appointmentModel: typeof Appointment,
   ) {}
 
-  //   async success(id: number) {
-  //     const orderExist = await this.orderModel.findByPk(id);
-  //     console.log('success called');
-
-  //     if (orderExist) {
-  //       try {
-  //         const result = await orderExist.update({ paymentStatus: 'Paid' });
-  //         if (result) {
-  //           return {
-  //             response: true,
-  //             statusCode: 200,
-  //             message: 'Successfully Paid',
-  //             result,
-  //           };
-  //         }
-  //       } catch (error) {
-  //         throw new HttpException('error', 500);
-  //       }
-  //     }
-  //   }
   async success(id: number) {
     const orderExist = await this.orderModel.findByPk(id);
     console.log('success called');
