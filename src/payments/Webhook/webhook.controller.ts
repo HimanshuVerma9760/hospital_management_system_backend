@@ -1,6 +1,5 @@
 import { Controller, Inject, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
-import OrdersService from 'src/orders/orders.service';
 import Stripe from 'stripe';
 import WebhookService from './webhook.service';
 
@@ -23,7 +22,7 @@ export class WebHookController {
         req.body,
         sig,
         process.env.STRIPE_WEBHOOK_SECRET || '',
-      ); 
+      );
     } catch (err) {
       console.error('Webhook signature verification failed:', err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -34,7 +33,7 @@ export class WebHookController {
       const orderId = session.metadata.orderId;
       console.log('webhook success called');
       await this.webhookService.success(orderId);
-    } 
+    }
 
     res.status(200).send('Webhook received');
   }
